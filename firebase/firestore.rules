@@ -1,0 +1,117 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function staffExists(cafeId) {
+      return exists(
+        /databases/$(database)/documents/cafes/$(cafeId)/staff/$(request.auth.uid)
+      );
+    }
+
+    function isStaff(cafeId) {
+      return isSignedIn() && staffExists(cafeId);
+    }
+
+    function role(cafeId) {
+      return get(
+        /databases/$(database)/documents/cafes/$(cafeId)/staff/$(request.auth.uid)
+      ).data.role;
+    }
+
+    function isOwner(cafeId) {
+      return isStaff(cafeId) && role(cafeId) == 'owner';
+    }
+
+    function isWaiterOrOwner(cafeId) {
+      return isStaff(cafeId) &&
+        (role(cafeId) == 'owner' || role(cafeId) == 'waiter');
+    }
+
+    function isChefOrOwner(cafeId) {
+      return isStaff(cafeId) &&
+        (role(cafeId) == 'owner' || role(cafeId) == 'chef');
+    }
+
+    function tokenMatchesOnCreate(cafeId, tableId) {
+      return request.resource.data.secretTokenCheck ==
+        get(
+          /databases/$(database)/documents/cafes/$(cafeId)/tables/$(tableId)
+        ).data.currentToken;
+    }
+
+    function tokenMatchesOnUpdate(cafeId, tableId) {
+      return request.resource.data.secretTokenCheck ==
+        resource.data.currentToken;
+    }
+
+     match /staffIndex/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /cafes/{cafeId} {
+
+      allow read: if true;
+      allow write: if isOwner(cafeId);
+
+      match /menu/{itemId} {
+        allow read: if true;
+        allow write: if isOwner(cafeId);
+      }
+
+      match /staff/{staffId} {
+        allow read: if isStaff(cafeId);
+        allow write: if isOwner(cafeId);
+      }
+
+      match /tables/{tableId} {
+        allow read: if true;
+        allow create, delete: if isOwner(cafeId);
+
+        allow update: if
+          isWaiterOrOwner(cafeId) ||
+          (
+            request.resource.data
+              .diff(resource.data)
+              .affectedKeys()
+              .hasOnly([
+                'status',
+                'sessionStartedAt',
+                'secretTokenCheck'
+              ]) &&
+            tokenMatchesOnUpdate(cafeId, tableId)
+          );
+      }
+
+      match /orders/{orderId} {
+        allow read: if true;
+
+        allow create: if
+          isWaiterOrOwner(cafeId) ||
+          tokenMatchesOnCreate(cafeId, request.resource.data.tableId);
+
+        allow update: if isWaiterOrOwner(cafeId);
+
+        allow delete: if isOwner(cafeId);
+
+        match /items/{itemId} {
+          allow read: if true;
+
+          allow create: if
+            isWaiterOrOwner(cafeId) || true;
+
+          allow update: if
+            isChefOrOwner(cafeId) ||
+            isWaiterOrOwner(cafeId);
+
+          allow delete: if isWaiterOrOwner(cafeId);
+        }
+      }
+    }
+  }
+}
