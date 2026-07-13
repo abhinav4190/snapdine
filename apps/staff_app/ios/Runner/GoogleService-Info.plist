@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1083720260358-iuvsnv0lv3r8eu2e4bd7u5chd2jcdg1c.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1083720260358-iuvsnv0lv3r8eu2e4bd7u5chd2jcdg1c</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCpT83nm_zPQAXWYGQJaZ_PpDxML8W-s2Q</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1083720260358</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.staffApp</string>
+	<key>PROJECT_ID</key>
+	<string>snapdine-e9aa3</string>
+	<key>STORAGE_BUCKET</key>
+	<string>snapdine-e9aa3.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1083720260358:ios:3e9c9286295460a9b95c87</string>
+</dict>
+</plist>

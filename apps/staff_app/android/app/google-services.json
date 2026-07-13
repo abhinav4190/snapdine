@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1083720260358",
+    "project_id": "snapdine-e9aa3",
+    "storage_bucket": "snapdine-e9aa3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083720260358:android:64cad3711bcfe570b95c87",
+        "android_client_info": {
+          "package_name": "com.example.staff_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1083720260358-mhihfg9u6rreji6d89tob4lnp68esg30.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYC_ypijqZpnLC4lwb_Q-D_inWYj7HbSw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1083720260358-mhihfg9u6rreji6d89tob4lnp68esg30.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
