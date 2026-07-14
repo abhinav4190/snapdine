@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+body {
+  background: #f7f5ef;
+  color: #211e19;
+}
+
+.leader {
+  flex: 1;
+  border-bottom: 1px dotted #dad5c7;
+  margin: 0 8px;
+  transform: translateY(-4px);
+}
+
+.perforation {
+  border-bottom: 1px dashed #dad5c7;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
