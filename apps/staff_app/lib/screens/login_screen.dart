@@ -5,6 +5,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:staff_app/providers/auth_provider.dart';
 import 'package:staff_app/theme/app_colors.dart';
 
+
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -26,7 +27,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> _loginHandle() async {
+  Future<void> _handleLogin() async {
     setState(() {
       _isLoading = true;
       _errorText = null;
@@ -43,92 +44,90 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           'invalid-credential' => 'No account found with these details.',
           'wrong-password' => 'Incorrect password.',
           'invalid-email' => 'Enter a valid email address.',
-          _ => 'Login failed. Please try again.',
+          _ => 'Login failed. Try again.',
         };
       });
     } finally {
-      if (mounted)
-        setState(() {
-          _isLoading = false;
-        });
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-       onTap: ()=>  FocusScope.of(context).unfocus(),
+     onTap: ()=>  FocusScope.of(context).unfocus(),
       child: Scaffold(
         body: SafeArea(
           child: Padding(
-            padding: EdgeInsetsGeometry.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 28),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Icon(
-                    PhosphorIconsBold.storefront,
-                    color: Colors.white,
-                    size: 28,
-                  ),
+                const Icon(
+                  PhosphorIconsThin.coffee,
+                  size: 40,
+                  color: AppColors.gold,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 28),
                 Text(
-                  'Team Login',
+                  'Sign in',
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
-                  'Sign in with the account provided by your cafe administrator.',
+                  'Use the account provided by your cafe administrator.',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 40),
                 TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: Icon(PhosphorIconsRegular.envelope),
-                  ),
+                  style: const TextStyle(color: AppColors.crema),
+                  decoration: const InputDecoration(hintText: 'Email'),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 TextField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
+                  style: const TextStyle(color: AppColors.crema),
                   decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: const Icon(PhosphorIconsRegular.lock),
+                    hintText: 'Password',
                     suffixIcon: IconButton(
-                      onPressed: () { setState(
-                        () => _obscurePassword = !_obscurePassword,
-                      );
+                      icon: Icon(
+                        _obscurePassword
+                            ? PhosphorIconsRegular.eye
+                            : PhosphorIconsRegular.eyeSlash,
+                        color: AppColors.muted,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        setState(() => _obscurePassword = !_obscurePassword);
                       },
-                      icon: Icon(_obscurePassword ? PhosphorIconsRegular.eye : PhosphorIconsRegular.eyeSlash),
                     ),
                   ),
                 ),
-                if(_errorText!=null) ...[
-                  const SizedBox(height: 12,),
-                  Text(_errorText!, style: TextStyle(
-                    color: AppColors.error, fontSize: 13
-                  ),)
-                ],
-                const SizedBox(height: 24,),
-                ElevatedButton(onPressed: _isLoading ? null : _loginHandle, child: _isLoading ? SizedBox(
-                  width: 20,
-                  height: 20,
-                  child:  CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
+                if (_errorText != null) ...[
+                  const SizedBox(height: 14),
+                  Text(
+                    _errorText!,
+                    style: const TextStyle(color: AppColors.error, fontSize: 13),
                   ),
-                ) : Text('Log In'))
+                ],
+                const SizedBox(height: 28),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _handleLogin,
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.ink,
+                          ),
+                        )
+                      : const Text('Continue'),
+                ),
               ],
             ),
           ),

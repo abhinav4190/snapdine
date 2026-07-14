@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/firebase_options.dart';
 import 'package:staff_app/screens/auth_gate.dart';
-import 'package:staff_app/screens/login_screen.dart';
+import 'package:staff_app/screens/splash_screen.dart';
 import 'package:staff_app/theme/app_theme.dart';
 
 void main() async {
@@ -19,8 +19,8 @@ class SnapDineStaffApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Snap Dine',
-      theme: AppTheme.light,
-      home: const AuthGate(),
+      theme: AppTheme.dark,
+      home: const SplashScreen(),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:staff_app/models/staff_model.dart';
 import 'package:staff_app/providers/auth_provider.dart';
 import 'package:staff_app/theme/app_colors.dart';
 
+
 class OwnerHomeScreen extends ConsumerWidget {
   final StaffModel staff;
   const OwnerHomeScreen({super.key, required this.staff});
@@ -13,25 +14,15 @@ class OwnerHomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome, ${staff.name}'),
+        title: Text(staff.name),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: IconButton(onPressed: () => ref.read(authServiceProvider).signOut(), icon: Icon(PhosphorIconsRegular.signOut)),
-          )
+          IconButton(
+            icon: const Icon(PhosphorIconsRegular.signOut, size: 20),
+            onPressed: () => ref.read(authServiceProvider).signOut(),
+          ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: 12,),
-            Text('Owner Dashboard'),
-            SizedBox(height: 4,),
-            Text('Cafe: ${staff.cafeId}')
-          ],
-        ),
-      ),
+      body: Placeholder()
     );
   }
 }
