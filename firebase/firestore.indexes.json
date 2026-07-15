@@ -22,14 +22,9 @@
       "collectionGroup": "items",
       "queryScope": "COLLECTION_GROUP",
       "fields": [
-        {
-          "fieldPath": "status",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "addedAt",
-          "order": "ASCENDING"
-        }
+        { "fieldPath": "cafeId", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "addedAt", "order": "ASCENDING" }
       ]
     }
   ],

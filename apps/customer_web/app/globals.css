@@ -1,21 +1,29 @@
 @import "tailwindcss";
 
+@theme {
+  --color-paper: #F7F5EF;
+  --color-surface: #EFEBDF;
+  --color-ink: #211E19;
+  --color-inkFaint: #6B6558;
+  --color-rule: #DAD5C7;
+  --color-moss: #3F5B44;
+  --color-rosewood: #9C5A46;
+}
+
+
 body {
   background: #f7f5ef;
   color: #211e19;
 }
 
-.leader {
-  flex: 1;
-  border-bottom: 1px dotted #dad5c7;
-  margin: 0 8px;
-  transform: translateY(-4px);
-}
-
-.perforation {
-  border-bottom: 1px dashed #dad5c7;
-}
-
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

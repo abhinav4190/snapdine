@@ -86,6 +86,16 @@ service cloud.firestore {
               ]) &&
             tokenMatchesOnUpdate(cafeId, tableId)
           );
+        
+       match /cart/{cartId} {
+  allow read: if true;
+
+  allow write: if
+    request.resource.data.secretTokenCheck ==
+      get(
+        /databases/$(database)/documents/cafes/$(cafeId)/tables/$(tableId)
+      ).data.currentToken;
+}
       }
 
       match /orders/{orderId} {
