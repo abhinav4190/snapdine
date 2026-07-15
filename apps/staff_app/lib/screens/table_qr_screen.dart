@@ -1,78 +1,212 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:staff_app/models/table_model.dart';
 import 'package:staff_app/providers/table_providers.dart';
 import 'package:staff_app/theme/app_colors.dart';
 
-class TableQrScreen extends ConsumerWidget {
+class TableQrScreen extends ConsumerStatefulWidget {
   final String cafeId;
   final TableModel table;
-  const TableQrScreen({super.key, required this.cafeId, required this.table});
+
+  const TableQrScreen({
+    super.key,
+    required this.cafeId,
+    required this.table,
+  });
+
+  @override
+  ConsumerState<TableQrScreen> createState() => _TableQrScreenState();
+}
+
+class _TableQrScreenState extends ConsumerState<TableQrScreen> {
+  final GlobalKey _qrKey = GlobalKey();
 
   String get _qrUrl =>
-      '${dotenv.env['CUSTOMER_WEB_URL']!}/order?cafeId=$cafeId&tableId=${table.id}&token=${table.currentToken}';
+      '${dotenv.env['CUSTOMER_WEB_URL']!}/order?cafeId=${widget.cafeId}&tableId=${widget.table.id}&token=${widget.table.currentToken}';
 
-  Future<void> _confirmReset(BuildContext context, WidgetRef ref) async {
-    final confirmed = await showDialog(
+  Future<void> _downloadQr() async {
+    try {
+      final permission = await Permission.photos.request();
+
+      if (!permission.isGranted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Permission denied'),
+          ),
+        );
+        return;
+      }
+
+      final boundary =
+          _qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+
+      final image = await boundary.toImage(pixelRatio: 4);
+
+      final byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+
+      final Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+      await ImageGallerySaverPlus.saveImage(
+        pngBytes,
+        quality: 100,
+        name:
+            "table_${widget.table.tableNumber}_${DateTime.now().millisecondsSinceEpoch}",
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("QR Code downloaded successfully"),
+        ),
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+  }
+
+  Future<void> _confirmReset() async {
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.surface,
-        title: Text('Reset table?', style: TextStyle(color: AppColors.crema)),
-        content: Text(
-          'This clears the session and prints a new QR code. The old QR code will stop working.',
+        title: const Text(
+          'Reset table?',
+          style: TextStyle(color: AppColors.crema),
+        ),
+        content: const Text(
+          'This clears the session and prints a new QR code. Old QR code will stop working.',
           style: TextStyle(color: AppColors.muted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel', style: TextStyle(color: AppColors.muted)),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.muted),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Reset', style: TextStyle(color: AppColors.gold)),
+            child: const Text(
+              'Reset',
+              style: TextStyle(color: AppColors.gold),
+            ),
           ),
         ],
       ),
     );
 
-    if (confirmed == true && context.mounted) {
-      await ref.read(tableServiceProvider).resetTable(cafeId, table.id);
-      if (context.mounted) Navigator.pop(context);
+    if (confirmed == true) {
+      await ref
+          .read(tableServiceProvider)
+          .resetTable(widget.cafeId, widget.table.id);
+
+      if (mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final table = widget.table;
+
     return Scaffold(
-      appBar: AppBar(title: Text('Table ${table.tableNumber}')),
+      appBar: AppBar(
+        title: Text('Table ${table.tableNumber}'),
+      ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.crema,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: QrImageView(
-                data: _qrUrl,
-                size: 220,
-                backgroundColor: AppColors.crema,
-                eyeStyle: QrEyeStyle(
-                  eyeShape: QrEyeShape.square,
-                  color: AppColors.ink,
+            RepaintBoundary(
+              key: _qrKey,
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
                 ),
-                dataModuleStyle: QrDataModuleStyle(
-                  dataModuleShape: QrDataModuleShape.square,
-                  color: AppColors.ink,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                         Text(
+                      "SNAPDINE",
+                      style: const TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+                    Text(
+                      "Table ${table.tableNumber}",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    QrImageView(
+                      data: _qrUrl,
+                      size: 250,
+                      backgroundColor: Colors.white,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    const Text(
+                      "Scan to Order",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black87,
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    const Text(
+                      "No App Required • No Login Required",
+                      style: TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 28),
+
+            const SizedBox(height: 32),
+
+            FilledButton.icon(
+              onPressed: _downloadQr,
+              icon: const Icon(Icons.download),
+              label: const Text("Download QR"),
+            ),
+
+            const SizedBox(height: 20),
+
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -90,21 +224,26 @@ class TableQrScreen extends ConsumerWidget {
                   table.status == TableStatus.occupied
                       ? 'Occupied'
                       : 'Available',
-                  style: TextStyle(color: AppColors.muted, fontSize: 14),
+                  style: const TextStyle(
+                    color: AppColors.muted,
+                    fontSize: 14,
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: 32),
+
+            const SizedBox(height: 24),
+
             TextButton.icon(
-              onPressed: () => _confirmReset(context, ref),
-              label: Text(
-                'Reset session',
-                style: TextStyle(color: AppColors.gold),
-              ),
+              onPressed: _confirmReset,
               icon: Icon(
                 PhosphorIconsThin.arrowsClockwise,
                 size: 18,
                 color: AppColors.gold,
+              ),
+              label: const Text(
+                'Reset session',
+                style: TextStyle(color: AppColors.gold),
               ),
             ),
           ],

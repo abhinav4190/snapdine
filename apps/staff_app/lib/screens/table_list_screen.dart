@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:staff_app/models/staff_model.dart';
 import 'package:staff_app/models/table_model.dart';
+import 'package:staff_app/providers/billing_providers.dart';
 import 'package:staff_app/providers/table_providers.dart';
+import 'package:staff_app/screens/billing_screen.dart';
+import 'package:staff_app/screens/table_detail_screen.dart';
 import 'package:staff_app/screens/table_qr_screen.dart';
 import 'package:staff_app/theme/app_colors.dart';
 
@@ -53,7 +56,11 @@ class TableListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tablesAsync = ref.watch(tableStreamProvider(staff.cafeId));
     return Scaffold(
-      appBar: AppBar(title: Text('Tables'), elevation: 0, scrolledUnderElevation: 0,),
+      appBar: AppBar(
+        title: Text('Tables'),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+      ),
       floatingActionButton: staff.role == StaffRole.owner
           ? FloatingActionButton(
               onPressed: () {
@@ -94,7 +101,7 @@ class TableListScreen extends ConsumerWidget {
                   context,
                   MaterialPageRoute(
                     builder: (_) =>
-                        TableQrScreen(cafeId: staff.cafeId, table: table),
+                        TableDetailScreen(cafeId: staff.cafeId, table: table),
                   ),
                 ),
                 child: Container(
@@ -123,17 +130,74 @@ class TableListScreen extends ConsumerWidget {
                               fontSize: 16,
                             ),
                           ),
-                          SizedBox(height: 4,),
-                          Text(
-                            isOccupied ? 'Occupied' : 'Availablee',
-                            style: TextStyle(
-                              color: isOccupied ? AppColors.rosewood : AppColors.sage,
-                              fontSize: 
-                              12.5
+                          SizedBox(height: 4),
+                          if (isOccupied)
+                            _LiveBillLable(
+                              cafeId: staff.cafeId,
+                              tableId: table.id,
+                            )
+                          else
+                            Text(
+                              'Available',
+                              style: TextStyle(
+                                color: AppColors.sage,
+                                fontSize: 12.5,
+                              ),
                             ),
-                          )
                         ],
                       ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Icon(
+                      //       PhosphorIconsThin.squaresFour,
+                      //       size: 26,
+                      //       color: isOccupied
+                      //           ? AppColors.rosewood
+                      //           : AppColors.sage,
+                      //     ),
+                      //     if (isOccupied)
+                      //       GestureDetector(
+                      //         onTap: () => Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //             builder: (_) => BillingScreen(
+                      //               cafeId: staff.cafeId,
+                      //               tablleId: table.id,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         child: const Icon(
+                      //           PhosphorIconsThin.receipt,
+                      //           size: 20,
+                      //           color: AppColors.gold,
+                      //         ),
+                      //       ),
+                      //   ],
+                      // ),
+                      // Column(
+                      //   crossAxisAlignment: CrossAxisAlignment.start,
+                      //   children: [
+                      //     Text(
+                      //       'Table ${table.tableNumber}',
+                      //       style: const TextStyle(
+                      //         color: AppColors.crema,
+                      //         fontWeight: FontWeight.w600,
+                      //         fontSize: 16,
+                      //       ),
+                      //     ),
+                      //     const SizedBox(height: 4),
+                      //     Text(
+                      //       isOccupied ? 'Occupied' : 'Available',
+                      //       style: TextStyle(
+                      //         color: isOccupied
+                      //             ? AppColors.rosewood
+                      //             : AppColors.sage,
+                      //         fontSize: 12.5,
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ),
@@ -153,6 +217,41 @@ class TableListScreen extends ConsumerWidget {
             strokeWidth: 2,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _LiveBillLable extends ConsumerWidget {
+  final String cafeId;
+  final String tableId;
+  const _LiveBillLable({
+    super.key,
+    required this.cafeId,
+    required this.tableId,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final billingAsync = ref.watch(
+      billingStramProvider(BillingArgs(cafeId: cafeId, tableId: tableId)),
+    );
+    return billingAsync.when(
+      data: (snap) => Text(
+        '₹${snap.subtotal.toStringAsFixed(0)}',
+        style: TextStyle(
+          color: AppColors.rosewood,
+          fontSize: 12.5,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      error: (e, _) => Text(
+        'Occupied',
+        style: TextStyle(color: AppColors.rosewood, fontSize: 12.5),
+      ),
+      loading: () => Text(
+        '...',
+        style: TextStyle(color: AppColors.rosewood, fontSize: 12.5),
       ),
     );
   }
