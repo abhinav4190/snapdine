@@ -53,6 +53,12 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Allow SnapDine to save QR codes to your Photos.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to your camera so you can take photos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to your microphone to record videos.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

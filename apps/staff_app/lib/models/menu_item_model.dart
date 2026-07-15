@@ -25,7 +25,7 @@ class MenuItemModel {
       price: (data['price'] as num?)?.toDouble() ?? 0,
       category: (data['category'] as String?) ?? 'Uncategorized',
       description: data['description'] as String? ?? '',
-      isAvailable: data['isAvailale'] as bool? ?? true,
+    isAvailable: data['isAvailable'] as bool? ?? true,
       imageUrl: data['imageUrl'] as String? ?? '',
     );
   }
