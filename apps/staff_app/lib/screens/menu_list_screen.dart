@@ -180,6 +180,7 @@ class MenuListScreen extends ConsumerWidget {
                                         .read(menuServiceProvider)
                                         .toggleAvailability(cafeId, item.id, v),
                                   ),
+                                  // IconButton(onPressed: ()=> _confirmDelete(context, ref, item), icon: Icon(PhosphorIconsThin.trash, size: 20, color: AppColors.rosewood,))
                                 ],
                               ),
                             ),

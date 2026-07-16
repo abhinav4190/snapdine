@@ -1,6 +1,7 @@
 {
   "projects": {
-    "snapdine": "snapdine-e9aa3"
+    "snapdine": "snapdine-e9aa3",
+    "default": "snapdine-e9aa3"
   },
   "targets": {},
   "etags": {}

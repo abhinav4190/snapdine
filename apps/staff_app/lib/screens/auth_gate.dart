@@ -4,8 +4,10 @@ import 'package:lottie/lottie.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:staff_app/models/staff_model.dart';
 import 'package:staff_app/providers/auth_provider.dart';
+import 'package:staff_app/providers/billing_providers.dart';
 import 'package:staff_app/screens/chef_home_screen.dart';
 import 'package:staff_app/screens/login_screen.dart';
+import 'package:staff_app/screens/onboarding_screen.dart';
 import 'package:staff_app/screens/owner_home_screen.dart';
 import 'package:staff_app/screens/waiter_home_screen.dart';
 import 'package:staff_app/theme/app_colors.dart';
@@ -40,8 +42,11 @@ class _StaffProfileGate extends ConsumerWidget {
       error: (err, _) => _ErrorScreen(message: err.toString()),
       data: (staff) {
         if (staff == null) return const _NotOnboardedScreen();
+        if (staff.role == StaffRole.owner) {
+          return _OwnerGate(staff: staff);
+        }
         return switch (staff.role) {
-          StaffRole.owner => OwnerHomeScreen(staff: staff),
+          StaffRole.owner => SizedBox.shrink(),
           StaffRole.waiter => WaiterHomeScreen(staff: staff),
           StaffRole.chef => ChefHomeScreen(staff: staff),
         };
@@ -144,6 +149,29 @@ class _NotOnboardedScreen extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _OwnerGate extends ConsumerWidget {
+  final StaffModel staff;
+  const _OwnerGate({super.key, required this.staff});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statusAsync = ref.watch(onboardingStatusProvider(staff.cafeId));
+    return statusAsync.when(
+      data: (status) {
+        if (status['onboarded'] == true) {
+          return OwnerHomeScreen(staff: staff);
+        }
+        return OnboardingScreen(
+          staff: staff,
+          startAtMenuStep: status['basicInfoDOne'] == true,
+        );
+      },
+      error: (err, _) => _ErrorScreen(message: err.toString()),
+      loading: () => _LoadingScreen(),
     );
   }
 }

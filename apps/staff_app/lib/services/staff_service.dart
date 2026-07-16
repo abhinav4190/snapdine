@@ -21,4 +21,15 @@ class StaffService {
 
     return StaffModel.fromMap(uid: uid, cafeId: cafeId, data: staffDoc.data()!);
   }
+
+  Stream<List<Map<String, dynamic>>> streamStaffList(String cafeId) {
+    return FirebaseFirestore.instance
+        .collection('cafes')
+        .doc(cafeId)
+        .collection('staff')
+        .snapshots()
+        .map(
+          (snap) => snap.docs.map((d) => {'uid': d.id, ...d.data()}).toList(),
+        );
+  }
 }

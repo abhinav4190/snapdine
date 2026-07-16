@@ -38,3 +38,8 @@ final billingStramProvider =
           .watch(billingServiceProvider)
           .streamBilling(args.cafeId, args.tableId);
     });
+
+final onboardingStatusProvider =
+    FutureProvider.family<Map<String, bool>, String>((ref, cafeId) {
+      return ref.watch(cafeServiceProvider).fetchOnboardingStatus(cafeId);
+    });

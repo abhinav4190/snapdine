@@ -7,6 +7,7 @@ import 'package:staff_app/providers/auth_provider.dart';
 import 'package:staff_app/providers/billing_providers.dart';
 import 'package:staff_app/providers/table_providers.dart';
 import 'package:staff_app/screens/menu_list_screen.dart';
+import 'package:staff_app/screens/profile_screen.dart';
 import 'package:staff_app/screens/table_detail_screen.dart';
 import 'package:staff_app/screens/table_list_screen.dart';
 import 'package:staff_app/theme/app_colors.dart';
@@ -198,6 +199,59 @@ class OwnerHomeScreen extends ConsumerWidget {
                           SizedBox(height: 2),
                           Text(
                             'Add items, edit prices, toogle stock',
+                            style: TextStyle(
+                              color: AppColors.muted,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      PhosphorIconsRegular.caretRight,
+                      size: 18,
+                      color: AppColors.muted,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 14),
+            InkWell(
+              borderRadius: BorderRadius.circular(18),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ProfileScreen(staff: staff)),
+              ),
+              child: Container(
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      PhosphorIconsThin.userGear,
+                      size: 26,
+                      color: AppColors.gold,
+                    ),
+                    SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Profile & Staff',
+                            style: TextStyle(
+                              color: AppColors.crema,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Cafe settings, manage waiters & chefs',
                             style: TextStyle(
                               color: AppColors.muted,
                               fontSize: 13,

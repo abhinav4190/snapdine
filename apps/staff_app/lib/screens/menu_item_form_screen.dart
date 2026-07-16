@@ -68,7 +68,7 @@ class _MenuItemFormScreenState extends ConsumerState<MenuItemFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.existing == null ? 'Add item' : 'Edit item'),
+        title: Text(widget.existing == null ? 'Add Item' : 'Edit Item'),
       ),
       body: ListView(
         padding: EdgeInsets.all(20),
