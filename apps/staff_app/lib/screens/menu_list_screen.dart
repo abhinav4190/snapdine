@@ -48,6 +48,7 @@ class MenuListScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
+        elevation: 0,
         title: Text('Menu'),
         actions: [
           IconButton(

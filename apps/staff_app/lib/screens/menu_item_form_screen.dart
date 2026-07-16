@@ -76,27 +76,27 @@ class _MenuItemFormScreenState extends ConsumerState<MenuItemFormScreen> {
           TextField(
             controller: _nameController,
             style: TextStyle(color: AppColors.crema),
-            decoration: InputDecoration(hintText: 'Item name'),
+            decoration: InputDecoration(labelText: 'Item name'),
           ),
           SizedBox(height: 14),
           TextField(
             controller: _priceController,
             keyboardType: TextInputType.number,
             style: TextStyle(color: AppColors.crema),
-            decoration: InputDecoration(hintText: 'Price (₹)'),
+            decoration: InputDecoration(labelText: 'Price (₹)'),
           ),
           SizedBox(height: 14),
           TextField(
             controller: _categoryController,
             style: TextStyle(color: AppColors.crema),
-            decoration: InputDecoration(hintText: 'Category (e.g. Bevarges)'),
+            decoration: InputDecoration(labelText: 'Category (e.g. Bevarges)'),
           ),
           SizedBox(height: 14),
           TextField(
             controller: _descController,
             maxLines: 2,
             style: TextStyle(color: AppColors.crema),
-            decoration: InputDecoration(hintText: 'Description (optional)'),
+            decoration: InputDecoration(labelText: 'Description (optional)'),
           ),
           SizedBox(height: 18),
           Row(

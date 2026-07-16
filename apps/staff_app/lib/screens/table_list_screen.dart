@@ -12,7 +12,12 @@ import 'package:staff_app/theme/app_colors.dart';
 
 class TableListScreen extends ConsumerWidget {
   final StaffModel staff;
-  const TableListScreen({super.key, required this.staff});
+  final bool embedded;
+  const TableListScreen({
+    super.key,
+    required this.staff,
+    this.embedded = false,
+  });
 
   Future<void> _showAddTableDialog(
     BuildContext context,
@@ -55,6 +60,155 @@ class TableListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tablesAsync = ref.watch(tableStreamProvider(staff.cafeId));
+
+    final body = tablesAsync.when(
+      data: (tables) {
+        if (tables.isEmpty) {
+          return Center(
+            child: Text(
+              staff.role == StaffRole.owner
+                  ? "No tables yet. Tap + to add one."
+                  : "No tables set up yet",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          );
+        }
+        return GridView.builder(
+          padding: EdgeInsets.all(20),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 14,
+            mainAxisSpacing: 14,
+            childAspectRatio: 1.1,
+          ),
+          itemCount: tables.length,
+          itemBuilder: (context, index) {
+            final table = tables[index];
+            final isOccupied = table.status == TableStatus.occupied;
+
+            return InkWell(
+              borderRadius: BorderRadius.circular(18),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      TableDetailScreen(cafeId: staff.cafeId, table: table),
+                ),
+              ),
+              child: Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Icon(
+                      PhosphorIconsThin.squaresFour,
+                      size: 26,
+                      color: isOccupied ? AppColors.rosewood : AppColors.sage,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Table ${table.tableNumber}',
+                          style: TextStyle(
+                            color: AppColors.crema,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        if (isOccupied)
+                          _LiveBillLable(
+                            cafeId: staff.cafeId,
+                            tableId: table.id,
+                          )
+                        else
+                          Text(
+                            'Available',
+                            style: TextStyle(
+                              color: AppColors.sage,
+                              fontSize: 12.5,
+                            ),
+                          ),
+                      ],
+                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     Icon(
+                    //       PhosphorIconsThin.squaresFour,
+                    //       size: 26,
+                    //       color: isOccupied
+                    //           ? AppColors.rosewood
+                    //           : AppColors.sage,
+                    //     ),
+                    //     if (isOccupied)
+                    //       GestureDetector(
+                    //         onTap: () => Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //             builder: (_) => BillingScreen(
+                    //               cafeId: staff.cafeId,
+                    //               tablleId: table.id,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //         child: const Icon(
+                    //           PhosphorIconsThin.receipt,
+                    //           size: 20,
+                    //           color: AppColors.gold,
+                    //         ),
+                    //       ),
+                    //   ],
+                    // ),
+                    // Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: [
+                    //     Text(
+                    //       'Table ${table.tableNumber}',
+                    //       style: const TextStyle(
+                    //         color: AppColors.crema,
+                    //         fontWeight: FontWeight.w600,
+                    //         fontSize: 16,
+                    //       ),
+                    //     ),
+                    //     const SizedBox(height: 4),
+                    //     Text(
+                    //       isOccupied ? 'Occupied' : 'Available',
+                    //       style: TextStyle(
+                    //         color: isOccupied
+                    //             ? AppColors.rosewood
+                    //             : AppColors.sage,
+                    //         fontSize: 12.5,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+      error: (error, _) => Center(
+        child: Text(
+          'Could not load tables',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ),
+      loading: () => Center(
+        child: CircularProgressIndicator(color: AppColors.gold, strokeWidth: 2),
+      ),
+    );
+
+    if (embedded) return body;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Tables'),
@@ -70,154 +224,7 @@ class TableListScreen extends ConsumerWidget {
               child: Icon(PhosphorIconsBold.plus, color: AppColors.ink),
             )
           : null,
-      body: tablesAsync.when(
-        data: (tables) {
-          if (tables.isEmpty) {
-            return Center(
-              child: Text(
-                staff.role == StaffRole.owner
-                    ? "No tables yet. Tap + to add one."
-                    : "No tables set up yet",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            );
-          }
-          return GridView.builder(
-            padding: EdgeInsets.all(20),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 14,
-              mainAxisSpacing: 14,
-              childAspectRatio: 1.1,
-            ),
-            itemCount: tables.length,
-            itemBuilder: (context, index) {
-              final table = tables[index];
-              final isOccupied = table.status == TableStatus.occupied;
-
-              return InkWell(
-                borderRadius: BorderRadius.circular(18),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        TableDetailScreen(cafeId: staff.cafeId, table: table),
-                  ),
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(
-                        PhosphorIconsThin.squaresFour,
-                        size: 26,
-                        color: isOccupied ? AppColors.rosewood : AppColors.sage,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Table ${table.tableNumber}',
-                            style: TextStyle(
-                              color: AppColors.crema,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          if (isOccupied)
-                            _LiveBillLable(
-                              cafeId: staff.cafeId,
-                              tableId: table.id,
-                            )
-                          else
-                            Text(
-                              'Available',
-                              style: TextStyle(
-                                color: AppColors.sage,
-                                fontSize: 12.5,
-                              ),
-                            ),
-                        ],
-                      ),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   children: [
-                      //     Icon(
-                      //       PhosphorIconsThin.squaresFour,
-                      //       size: 26,
-                      //       color: isOccupied
-                      //           ? AppColors.rosewood
-                      //           : AppColors.sage,
-                      //     ),
-                      //     if (isOccupied)
-                      //       GestureDetector(
-                      //         onTap: () => Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //             builder: (_) => BillingScreen(
-                      //               cafeId: staff.cafeId,
-                      //               tablleId: table.id,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //         child: const Icon(
-                      //           PhosphorIconsThin.receipt,
-                      //           size: 20,
-                      //           color: AppColors.gold,
-                      //         ),
-                      //       ),
-                      //   ],
-                      // ),
-                      // Column(
-                      //   crossAxisAlignment: CrossAxisAlignment.start,
-                      //   children: [
-                      //     Text(
-                      //       'Table ${table.tableNumber}',
-                      //       style: const TextStyle(
-                      //         color: AppColors.crema,
-                      //         fontWeight: FontWeight.w600,
-                      //         fontSize: 16,
-                      //       ),
-                      //     ),
-                      //     const SizedBox(height: 4),
-                      //     Text(
-                      //       isOccupied ? 'Occupied' : 'Available',
-                      //       style: TextStyle(
-                      //         color: isOccupied
-                      //             ? AppColors.rosewood
-                      //             : AppColors.sage,
-                      //         fontSize: 12.5,
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        },
-        error: (error, _) => Center(
-          child: Text(
-            'Could not load tables',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ),
-        loading: () => Center(
-          child: CircularProgressIndicator(
-            color: AppColors.gold,
-            strokeWidth: 2,
-          ),
-        ),
-      ),
+      body: body,
     );
   }
 }

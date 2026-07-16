@@ -20,7 +20,7 @@ class SnapDineStaffApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Snap Dine',
+      title: 'SNAPDINE',
       theme: AppTheme.dark,
       home: const SplashScreen(),
     );

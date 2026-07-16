@@ -37,6 +37,20 @@ class _TableQrScreenState extends ConsumerState<TableQrScreen> {
     try {
       final permission = await Permission.photos.request();
 
+         if (permission.isPermanentlyDenied) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Permission denied. Enable it from app settings.'),
+          action: SnackBarAction(
+            label: 'Settings',
+            onPressed: openAppSettings,
+          ),
+        ),
+      );
+      return;
+    }
+
       if (!permission.isGranted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

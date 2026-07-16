@@ -18,7 +18,7 @@ class ChefHomeScreen extends ConsumerWidget {
     final itemsAsync = ref.watch(pendingItemsProvider(staff.cafeId));
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kitchen'),
+        title: Text('Kitchen: ${staff.cafeId}'),
         actions: [
           IconButton(
             icon: const Icon(PhosphorIconsRegular.signOut, size: 20),
@@ -62,7 +62,9 @@ class ChefHomeScreen extends ConsumerWidget {
               final tableLabel = tableId.replaceAll('table-', 'Table ');
 
               return Container(
-                margin: EdgeInsets.symmetric(horizontal: 20).copyWith(bottom: 16, top: 5),
+                margin: EdgeInsets.symmetric(
+                  horizontal: 20,
+                ).copyWith(bottom: 16, top: 5),
                 padding: EdgeInsets.all(18),
                 decoration: BoxDecoration(
                   color: AppColors.surface,

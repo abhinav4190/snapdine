@@ -62,7 +62,8 @@ class _MenuOcrScreenState extends ConsumerState<MenuOcrScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Scan menu with AI')),
+      appBar: AppBar(title: Text('Scan menu with AI'),  scrolledUnderElevation: 0,
+        elevation: 0,),
       body: _loading
           ? Center(
               child: CircularProgressIndicator(

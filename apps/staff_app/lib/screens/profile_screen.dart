@@ -30,242 +30,245 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       staffListStreamProvider(widget.staff.cafeId),
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-        actions: [
-          IconButton(
-            onPressed: () => ref.read(authServiceProvider).signOut(),
-            icon: Icon(PhosphorIconsRegular.signOut, size: 20),
-          ),
-        ],
-      ),
-      body: configAsync.when(
-        data: (data) {
-          if (!_loaded) {
-            _nameController.text = data.name;
-            _gstController.text = data.gstPercent.toStringAsFixed(0);
-            _serviceContoller.text = data.serviceChargePercent.toStringAsFixed(
-              0,
-            );
-            _loaded = true;
-          }
-
-          return ListView(
-            padding: EdgeInsets.all(20),
-            children: [
-              Text(
-                'Cafe details',
-                style: TextStyle(
-                  color: AppColors.gold,
-                  fontWeight: FontWeight.w600,
+    return GestureDetector(
+     onTap: ()=>  FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Profile'),
+          actions: [
+            IconButton(
+              onPressed: () => ref.read(authServiceProvider).signOut(),
+              icon: Icon(PhosphorIconsRegular.signOut, size: 20),
+            ),
+          ],
+        ),
+        body: configAsync.when(
+          data: (data) {
+            if (!_loaded) {
+              _nameController.text = data.name;
+              _gstController.text = data.gstPercent.toStringAsFixed(0);
+              _serviceContoller.text = data.serviceChargePercent.toStringAsFixed(
+                0,
+              );
+              _loaded = true;
+            }
+      
+            return ListView(
+              padding: EdgeInsets.all(20),
+              children: [
+                Text(
+                  'Cafe details',
+                  style: TextStyle(
+                    color: AppColors.gold,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: _nameController,
-                style: TextStyle(color: AppColors.crema),
-                decoration: InputDecoration(hintText: 'Cafe name'),
-              ),
-              SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _gstController,
-                      keyboardType: TextInputType.number,
-                      style: TextStyle(color: AppColors.crema),
-                      decoration: InputDecoration(hintText: 'GST %'),
+                SizedBox(height: 10),
+                TextField(
+                  controller: _nameController,
+                  style: TextStyle(color: AppColors.crema),
+                  decoration: InputDecoration(labelText: 'Cafe name'),
+                ),
+                SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _gstController,
+                        keyboardType: TextInputType.number,
+                        style: TextStyle(color: AppColors.crema),
+                        decoration: InputDecoration(labelText: 'GST %'),
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: TextField(
-                      controller: _serviceContoller,
-                      keyboardType: TextInputType.number,
-                      style: TextStyle(color: AppColors.crema),
-                      decoration: InputDecoration(hintText: 'Service charge %'),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: _serviceContoller,
+                        keyboardType: TextInputType.number,
+                        style: TextStyle(color: AppColors.crema),
+                        decoration: InputDecoration(labelText: 'Service charge %'),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 14),
-              ElevatedButton(
-                onPressed: _saving
-                    ? null
-                    : () async {
-                        setState(() => _saving = true);
-                        await ref
-                            .read(cafeServiceProvider)
-                            .updateCafeConfig(
-                              widget.staff.cafeId,
-                              name: _nameController.text.trim(),
-                              gstPercent:
-                                  double.tryParse(_gstController.text.trim()) ??
-                                  0,
-                              serviceChargePercent:
-                                  double.tryParse(
-                                    _serviceContoller.text.trim(),
-                                  ) ??
-                                  0,
-                            );
-                      },
-                child: _saving
-                    ? SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.ink,
+                  ],
+                ),
+                SizedBox(height: 14),
+                ElevatedButton(
+                  onPressed: _saving
+                      ? null
+                      : () async {
+                          setState(() => _saving = true);
+                          await ref
+                              .read(cafeServiceProvider)
+                              .updateCafeConfig(
+                                widget.staff.cafeId,
+                                name: _nameController.text.trim(),
+                                gstPercent:
+                                    double.tryParse(_gstController.text.trim()) ??
+                                    0,
+                                serviceChargePercent:
+                                    double.tryParse(
+                                      _serviceContoller.text.trim(),
+                                    ) ??
+                                    0,
+                              );
+                        },
+                  child: _saving
+                      ? SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.ink,
+                          ),
+                        )
+                      : Text('Save changes'),
+                ),
+                SizedBox(height: 32),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Staff',
+                        style: TextStyle(
+                          color: AppColors.gold,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
                         ),
-                      )
-                    : Text('Save changes'),
-              ),
-              SizedBox(height: 32),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Staff',
-                      style: TextStyle(
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              AddStaffScreen(cafeId: widget.staff.cafeId),
+                        ),
+                      ),
+                      icon: Icon(
+                        PhosphorIconsBold.plus,
+                        size: 20,
                         color: AppColors.gold,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
                       ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            AddStaffScreen(cafeId: widget.staff.cafeId),
-                      ),
-                    ),
-                    icon: Icon(
-                      PhosphorIconsBold.plus,
-                      size: 20,
-                      color: AppColors.gold,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 8),
-              staffListAsync.when(
-                data: (staffList) {
-                  final others = staffList
-                      .where((s) => s['uid'] != widget.staff.uid)
-                      .toList();
-                  if (others.isEmpty) {
-                    return Text(
-                      'No staff added yet',
-                      style: TextStyle(color: AppColors.muted, fontSize: 13),
-                    );
-                  }
-                  return Column(
-                    children: others.map((s) {
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 8),
-                        padding: EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    s['name'] as String? ?? '',
-                                    style: TextStyle(
-                                      color: AppColors.crema,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    (s['role'] as String? ?? '').toUpperCase(),
-                                    style: TextStyle(
-                                      color: AppColors.muted,
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () async {
-                                final confirmed = await showDialog<bool>(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    backgroundColor: AppColors.surface,
-                                    title: Text(
-                                      'Remove staff?',
-                                      style: TextStyle(color: AppColors.crema),
-                                    ),
-                                    content: Text(
-                                      '${s['name']} will lose access immediately.',
-                                      style: TextStyle(color: AppColors.muted),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, false),
-                                        child: Text(
-                                          'Cancel',
-                                          style: TextStyle(
-                                            color: AppColors.muted,
-                                          ),
-                                        ),
-                                      ),
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, true),
-                                        child: Text(
-                                          'Remove',
-                                          style: TextStyle(
-                                            color: AppColors.rosewood,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                                if(confirmed==true){
-                                  final callable = ref.read(functionsProvider).httpsCallable('deleteStaffAccount');
-                                  await callable.call({
-                                    'cafeId': widget.staff.cafeId,
-                                    'staffUid': s['uid']
-                                  });
-                                }
-                              },
-                              icon: Icon(
-                                PhosphorIconsThin.trash,
-                                size: 20,
-                                color: AppColors.rosewood,
-                              ),
-                            ),
-                          ],
-                        ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                staffListAsync.when(
+                  data: (staffList) {
+                    final others = staffList
+                        .where((s) => s['uid'] != widget.staff.uid)
+                        .toList();
+                    if (others.isEmpty) {
+                      return Text(
+                        'No staff added yet',
+                        style: TextStyle(color: AppColors.muted, fontSize: 13),
                       );
-                    }).toList(),
-                  );
-                },
-                error: (_, __) => Text(
-                  'Cpuld not load staff',
-                  style: TextStyle(color: AppColors.muted),
+                    }
+                    return Column(
+                      children: others.map((s) {
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 8),
+                          padding: EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      s['name'] as String? ?? '',
+                                      style: TextStyle(
+                                        color: AppColors.crema,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      (s['role'] as String? ?? '').toUpperCase(),
+                                      style: TextStyle(
+                                        color: AppColors.muted,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  final confirmed = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      backgroundColor: AppColors.surface,
+                                      title: Text(
+                                        'Remove staff?',
+                                        style: TextStyle(color: AppColors.crema),
+                                      ),
+                                      content: Text(
+                                        '${s['name']} will lose access immediately.',
+                                        style: TextStyle(color: AppColors.muted),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, false),
+                                          child: Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                              color: AppColors.muted,
+                                            ),
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, true),
+                                          child: Text(
+                                            'Remove',
+                                            style: TextStyle(
+                                              color: AppColors.rosewood,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  if(confirmed==true){
+                                    final callable = ref.read(functionsProvider).httpsCallable('deleteStaffAccount');
+                                    await callable.call({
+                                      'cafeId': widget.staff.cafeId,
+                                      'staffUid': s['uid']
+                                    });
+                                  }
+                                },
+                                icon: Icon(
+                                  PhosphorIconsThin.trash,
+                                  size: 20,
+                                  color: AppColors.rosewood,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                  error: (_, __) => Text(
+                    'Cpuld not load staff',
+                    style: TextStyle(color: AppColors.muted),
+                  ),
+                  loading: () => Center(
+                    child: CircularProgressIndicator(color: AppColors.gold),
+                  ),
                 ),
-                loading: () => Center(
-                  child: CircularProgressIndicator(color: AppColors.gold),
-                ),
-              ),
-            ],
-          );
-        },
-        error: (_, __) => Center(child: Text('Could not load profile')),
-        loading: () =>
-            Center(child: CircularProgressIndicator(color: AppColors.gold)),
+              ],
+            );
+          },
+          error: (_, __) => Center(child: Text('Could not load profile')),
+          loading: () =>
+              Center(child: CircularProgressIndicator(color: AppColors.gold)),
+        ),
       ),
     );
   }
