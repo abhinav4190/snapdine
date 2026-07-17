@@ -24,18 +24,23 @@ class WaiterHomeScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(PhosphorIconsRegular.signOut, size: 20),
-            onPressed: () => ref.read(authServiceProvider).signOut(),
-
+            onPressed: () async {
+              await ref.read(authServiceProvider).signOut();
+              if (context.mounted) {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              }
+            },
           ),
         ],
         scrolledUnderElevation: 0,
-        
       ),
       body: Column(
         children: [
           tablesAsync.when(
             data: (tables) {
-              final occupied = tables.where((t) => t.status == TableStatus.occupied).toList();
+              final occupied = tables
+                  .where((t) => t.status == TableStatus.occupied)
+                  .toList();
               if (occupied.isEmpty) return const SizedBox.shrink();
 
               return Padding(
@@ -43,38 +48,57 @@ class WaiterHomeScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Active tables',
-                        style: TextStyle(
-                            color: AppColors.gold, fontWeight: FontWeight.w600, fontSize: 13)),
+                    const Text(
+                      'Active tables',
+                      style: TextStyle(
+                        color: AppColors.gold,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
                     const SizedBox(height: 10),
-                    ...occupied.map((table) => Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(14),
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    TableDetailScreen(cafeId: staff.cafeId, table: table),
-                              ),
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                              decoration: BoxDecoration(
-                                color: AppColors.surface,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: Row(
-                                children: [
-                                  Text('Table ${table.tableNumber}',
-                                      style: const TextStyle(color: AppColors.crema)),
-                                  const Spacer(),
-                                  _InlineBillTotal(cafeId: staff.cafeId, tableId: table.id),
-                                ],
+                    ...occupied.map(
+                      (table) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(14),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => TableDetailScreen(
+                                cafeId: staff.cafeId,
+                                table: table,
                               ),
                             ),
                           ),
-                        )),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Table ${table.tableNumber}',
+                                  style: const TextStyle(
+                                    color: AppColors.crema,
+                                  ),
+                                ),
+                                const Spacer(),
+                                _InlineBillTotal(
+                                  cafeId: staff.cafeId,
+                                  tableId: table.id,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                     const Divider(color: AppColors.surfaceHigh, height: 28),
                   ],
                 ),
@@ -97,10 +121,17 @@ class _InlineBillTotal extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final billingAsync = ref.watch(billingStramProvider(BillingArgs(cafeId: cafeId, tableId: tableId)));
+    final billingAsync = ref.watch(
+      billingStramProvider(BillingArgs(cafeId: cafeId, tableId: tableId)),
+    );
     return billingAsync.when(
-      data: (snapshot) => Text('₹${snapshot.subtotal.toStringAsFixed(0)}',
-          style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.w600)),
+      data: (snapshot) => Text(
+        '₹${snapshot.subtotal.toStringAsFixed(0)}',
+        style: const TextStyle(
+          color: AppColors.gold,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
       loading: () => const Text('…', style: TextStyle(color: AppColors.gold)),
       error: (_, __) => const SizedBox.shrink(),
     );

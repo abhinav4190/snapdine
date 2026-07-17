@@ -31,13 +31,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
 
     return GestureDetector(
-     onTap: ()=>  FocusScope.of(context).unfocus(),
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
           title: Text('Profile'),
           actions: [
             IconButton(
-              onPressed: () => ref.read(authServiceProvider).signOut(),
+              onPressed: () async {
+                await ref.read(authServiceProvider).signOut();
+                if (context.mounted) {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
+              },
               icon: Icon(PhosphorIconsRegular.signOut, size: 20),
             ),
           ],
@@ -47,12 +52,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             if (!_loaded) {
               _nameController.text = data.name;
               _gstController.text = data.gstPercent.toStringAsFixed(0);
-              _serviceContoller.text = data.serviceChargePercent.toStringAsFixed(
-                0,
-              );
+              _serviceContoller.text = data.serviceChargePercent
+                  .toStringAsFixed(0);
               _loaded = true;
             }
-      
+
             return ListView(
               padding: EdgeInsets.all(20),
               children: [
@@ -86,7 +90,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         controller: _serviceContoller,
                         keyboardType: TextInputType.number,
                         style: TextStyle(color: AppColors.crema),
-                        decoration: InputDecoration(labelText: 'Service charge %'),
+                        decoration: InputDecoration(
+                          labelText: 'Service charge %',
+                        ),
                       ),
                     ),
                   ],
@@ -103,7 +109,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 widget.staff.cafeId,
                                 name: _nameController.text.trim(),
                                 gstPercent:
-                                    double.tryParse(_gstController.text.trim()) ??
+                                    double.tryParse(
+                                      _gstController.text.trim(),
+                                    ) ??
                                     0,
                                 serviceChargePercent:
                                     double.tryParse(
@@ -187,7 +195,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       ),
                                     ),
                                     Text(
-                                      (s['role'] as String? ?? '').toUpperCase(),
+                                      (s['role'] as String? ?? '')
+                                          .toUpperCase(),
                                       style: TextStyle(
                                         color: AppColors.muted,
                                         fontSize: 11,
@@ -204,11 +213,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       backgroundColor: AppColors.surface,
                                       title: Text(
                                         'Remove staff?',
-                                        style: TextStyle(color: AppColors.crema),
+                                        style: TextStyle(
+                                          color: AppColors.crema,
+                                        ),
                                       ),
                                       content: Text(
                                         '${s['name']} will lose access immediately.',
-                                        style: TextStyle(color: AppColors.muted),
+                                        style: TextStyle(
+                                          color: AppColors.muted,
+                                        ),
                                       ),
                                       actions: [
                                         TextButton(
@@ -234,11 +247,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       ],
                                     ),
                                   );
-                                  if(confirmed==true){
-                                    final callable = ref.read(functionsProvider).httpsCallable('deleteStaffAccount');
+                                  if (confirmed == true) {
+                                    final callable = ref
+                                        .read(functionsProvider)
+                                        .httpsCallable('deleteStaffAccount');
                                     await callable.call({
                                       'cafeId': widget.staff.cafeId,
-                                      'staffUid': s['uid']
+                                      'staffUid': s['uid'],
                                     });
                                   }
                                 },

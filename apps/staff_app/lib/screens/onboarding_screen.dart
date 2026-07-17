@@ -78,132 +78,144 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      body: SafeArea(child: _step == 0 ? _buildBasicInfoStep() : _buildMenuStep()),
+    return  GestureDetector(
+         onTap: ()=>  FocusScope.of(context).unfocus(),
+
+      child: Scaffold(
+        body: SafeArea(child: _step == 0 ? _buildBasicInfoStep() : _buildMenuStep()),
+      ),
     );
   }
 
   Widget _buildBasicInfoStep() {
-    return Padding(
-      padding: EdgeInsetsGeometry.all(28),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(PhosphorIconsThin.storefront, size: 36, color: AppColors.gold),
-          SizedBox(height: 20),
-          Text(
-            'Set up your cafe',
-            style: TextStyle(
-              color: AppColors.crema,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
+    return GestureDetector(
+         onTap: ()=>  FocusScope.of(context).unfocus(),
+
+      child: Padding(
+        padding: EdgeInsetsGeometry.all(28),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(PhosphorIconsThin.storefront, size: 36, color: AppColors.gold),
+            SizedBox(height: 20),
+            Text(
+              'Set up your cafe',
+              style: TextStyle(
+                color: AppColors.crema,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          SizedBox(height: 6),
-          Text(
-            'This only takes a minute.',
-            style: TextStyle(color: AppColors.muted, fontSize: 13),
-          ),
-          SizedBox(height: 28),
-          TextField(
-            controller: _nameController,
-            style: TextStyle(color: AppColors.crema),
-            decoration: InputDecoration(hintText: 'Cafe name'),
-          ),
-          SizedBox(height: 14),
-          TextField(
-            controller: _tablesController,
-            keyboardType: TextInputType.number,
-            style: TextStyle(color: AppColors.crema),
-            decoration: InputDecoration(hintText: 'Number of tables'),
-          ),
-          SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _gstController,
-                  keyboardType: TextInputType.number,
-                  style: TextStyle(color: AppColors.crema),
-                  decoration: InputDecoration(hintText: 'GST %'),
+            SizedBox(height: 6),
+            Text(
+              'This only takes a minute.',
+              style: TextStyle(color: AppColors.muted, fontSize: 13),
+            ),
+            SizedBox(height: 28),
+            TextField(
+              controller: _nameController,
+              style: TextStyle(color: AppColors.crema),
+              decoration: InputDecoration(hintText: 'Cafe name'),
+            ),
+            SizedBox(height: 14),
+            TextField(
+              controller: _tablesController,
+              keyboardType: TextInputType.number,
+              style: TextStyle(color: AppColors.crema),
+              decoration: InputDecoration(hintText: 'Number of tables'),
+            ),
+            SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _gstController,
+                    keyboardType: TextInputType.number,
+                    style: TextStyle(color: AppColors.crema),
+                    decoration: InputDecoration(hintText: 'GST %'),
+                  ),
                 ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: TextField(
-                  controller: _serviceContoller,
-                  keyboardType: TextInputType.number,
-                  style: TextStyle(color: AppColors.crema),
-                  decoration: InputDecoration(hintText: 'Service charge %'),
+                SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: _serviceContoller,
+                    keyboardType: TextInputType.number,
+                    style: TextStyle(color: AppColors.crema),
+                    decoration: InputDecoration(hintText: 'Service charge %'),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: _saving ? null : _saveBasicInfo,
-            child: _saving
-                ? SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppColors.ink,
-                    ),
-                  )
-                : Text('Continue'),
-          ),
-        ],
+              ],
+            ),
+            SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _saving ? null : _saveBasicInfo,
+              child: _saving
+                  ? SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.ink,
+                      ),
+                    )
+                  : Text('Continue'),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildMenuStep() {
-    return Padding(
-      padding: EdgeInsets.all(28),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(PhosphorIconsThin.sparkle, size: 36, color: AppColors.gold),
-          SizedBox(height: 20),
-          Text(
-            'Add your menu',
-            style: TextStyle(
-              color: AppColors.crema,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
+    return GestureDetector(
+         onTap: ()=>  FocusScope.of(context).unfocus(),
+
+      child: Padding(
+        padding: EdgeInsets.all(28),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(PhosphorIconsThin.sparkle, size: 36, color: AppColors.gold),
+            SizedBox(height: 20),
+            Text(
+              'Add your menu',
+              style: TextStyle(
+                color: AppColors.crema,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          SizedBox(height: 6),
-          Text(
-            "Scan a photo of your physical menu and AI will fill it in for you. You can always add items manually later.",
-            style: TextStyle(color: AppColors.muted, fontSize: 13),
-          ),
-          SizedBox(height: 28),
-          ElevatedButton.icon(
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => MenuOcrScreen(cafeId: widget.staff.cafeId),
-                ),
-              );
-              await _finish();
-            },
-            label: Text('Scan menu now'),
-            icon: Icon(PhosphorIconsBold.camera, size: 18),
-          ),
-          SizedBox(height: 14),
-          TextButton(
-            onPressed: _finish,
-            child: Text(
-              "Skip, I will add menu later.",
-              style: TextStyle(color: AppColors.muted),
+            SizedBox(height: 6),
+            Text(
+              "Scan a photo of your physical menu and AI will fill it in for you. You can always add items manually later.",
+              style: TextStyle(color: AppColors.muted, fontSize: 13),
             ),
-          ),
-        ],
+            SizedBox(height: 28),
+            ElevatedButton.icon(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => MenuOcrScreen(cafeId: widget.staff.cafeId),
+                  ),
+                );
+                await _finish();
+              },
+              label: Text('Scan menu now'),
+              icon: Icon(PhosphorIconsBold.camera, size: 18),
+            ),
+            SizedBox(height: 14),
+            TextButton(
+              onPressed: _finish,
+              child: Text(
+                "Skip, I will add menu later.",
+                style: TextStyle(color: AppColors.muted),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

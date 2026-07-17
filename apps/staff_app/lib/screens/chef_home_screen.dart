@@ -18,11 +18,16 @@ class ChefHomeScreen extends ConsumerWidget {
     final itemsAsync = ref.watch(pendingItemsProvider(staff.cafeId));
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kitchen: ${staff.cafeId}'),
+        title: Text('Kitchen'),
         actions: [
           IconButton(
             icon: const Icon(PhosphorIconsRegular.signOut, size: 20),
-            onPressed: () => ref.read(authServiceProvider).signOut(),
+            onPressed: () async {
+                await ref.read(authServiceProvider).signOut();
+                if (context.mounted) {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
+              },
           ),
         ],
       ),
