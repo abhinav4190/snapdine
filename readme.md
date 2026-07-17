@@ -210,5 +210,5 @@ than 20% ai assisted.
 ## notes / things worth knowing
 
 - whatsapp receipts: since many small cafes don't have thermal printers, the
-  billing system generates a pre-filled whatsapp message with the total
+  billing system generates a pre filled whatsapp message with the total
   breakdown so the owner can send it to the customer in one click.
